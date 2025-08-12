@@ -1,6 +1,6 @@
 # File: D:/AI/Gits/hebrew-tutor-data-pipeline/scripts/convert_hebrew_grammar_pdf.py
 # Pipeline for Hebrew grammar PDFs using Azure Document Intelligence, compatible with Conda unstructured_env-3.11.
-# Updated for parallel processing: Use ThreadPoolExecutor for image conversion and OCR to reduce runtime.
+# Fixed JSON serialization: Convert NumPy float32 to Python float.
 
 import os
 import cv2
@@ -16,7 +16,6 @@ import hebrew_tokenizer as ht
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.core.credentials import AzureKeyCredential
 from dotenv import load_dotenv
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Load Azure credentials
 load_dotenv()
@@ -41,27 +40,20 @@ def preprocess_hebrew_image(image):
     _, img = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     return Image.fromarray(img)
 
-def convert_pdf_to_images(pdf_path, output_dir, dpi=300, max_workers=4):
+def convert_pdf_to_images(pdf_path, output_dir, dpi=300):
     doc = fitz.open(pdf_path)
     processed_images = []
     output_dir.mkdir(exist_ok=True)
-    
-    def process_page(page_num):
+    for page_num in range(len(doc)):
         page = doc[page_num]
         pix = page.get_pixmap(dpi=dpi)
         img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
         processed_img = preprocess_hebrew_image(img)
         output_path = output_dir / f"page_{page_num+1}.png"
         processed_img.save(output_path)
-        return output_path
-    
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = [executor.submit(process_page, page_num) for page_num in range(len(doc))]
-        for future in as_completed(futures):
-            processed_images.append(future.result())
-    
+        processed_images.append(output_path)
     doc.close()
-    return sorted(processed_images)  # Sort by page number
+    return processed_images
 
 def ocr_hebrew_page(image_path):
     if not AZURE_ENDPOINT or not AZURE_KEY:
@@ -76,14 +68,6 @@ def ocr_hebrew_page(image_path):
     # dnikud = Diacritizer(model_path="D:/AI/Models/d_nikud")
     # text = dnikud.diacritize(text)
     return text
-
-def process_ocr_in_parallel(image_paths, max_workers=4):
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = [executor.submit(ocr_hebrew_page, image_path) for image_path in image_paths]
-        raw_texts = []
-        for future in as_completed(futures):
-            raw_texts.append(future.result())
-    return raw_texts  # Returns in order of completion; map back if needed
 
 def process_hebrew_text(text):
     try:
@@ -156,14 +140,14 @@ def main():
         book_output_dir.mkdir(exist_ok=True)
         print(f"Processing {book_name} with Azure Document Intelligence...")
         image_paths = convert_pdf_to_images(pdf_path, book_output_dir)
-        raw_texts = process_ocr_in_parallel(image_paths)
         all_structured_data = []
-        for i, raw_text in enumerate(raw_texts):
+        for image_path in image_paths:
+            raw_text = ocr_hebrew_page(image_path)
             processed_data = process_hebrew_text(raw_text)
             structured_data = structure_grammar_data(raw_text, processed_data)
             validation_results = validate_hebrew_output(structured_data['text'])
             page_data = {
-                'page_number': int(Path(image_paths[i]).stem.split('_')[1]),
+                'page_number': int(image_path.stem.split('_')[1]),
                 'structured_data': structured_data,
                 'validation_results': validation_results
             }
