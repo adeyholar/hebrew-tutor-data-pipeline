@@ -1,6 +1,6 @@
 # File: D:/AI/Gits/hebrew-tutor-data-pipeline/scripts/convert_hebrew_grammar_pdf.py
 # Pipeline for Hebrew grammar PDFs using Azure Document Intelligence, compatible with Conda unstructured_env-3.11.
-# Fixed JSON serialization: Convert NumPy float32 to Python float.
+# Fixed text extraction: Use 'line.content' instead of 'span.content' for Azure result.
 
 import os
 import cv2
@@ -87,20 +87,6 @@ def process_hebrew_text(text):
         'processed_text': clean_text
     }
 
-def convert_to_serializable(obj):
-    """Convert NumPy types to Python types for JSON serialization."""
-    if isinstance(obj, np.integer):
-        return int(obj)
-    elif isinstance(obj, np.floating):
-        return float(obj)
-    elif isinstance(obj, np.ndarray):
-        return [convert_to_serializable(item) for item in obj]
-    elif isinstance(obj, dict):
-        return {key: convert_to_serializable(value) for key, value in obj.items()}
-    elif isinstance(obj, list):
-        return [convert_to_serializable(item) for item in obj]
-    return obj
-
 def structure_grammar_data(text, morphological_data):
     normalized_text = unicodedata.normalize('NFC', text)
     undiacritized = re.sub(r'[\u05B0-\u05C7]', '', normalized_text)
@@ -110,10 +96,10 @@ def structure_grammar_data(text, morphological_data):
         'text': normalized_text,
         'undiacritized': undiacritized,
         'nikud_classification': {
-            'nikud': convert_to_serializable(nikud_map),
-            'dagesh': convert_to_serializable(dagesh_map)
+            'nikud': nikud_map,
+            'dagesh': dagesh_map
         },
-        'morphological_analysis': convert_to_serializable(morphological_data['morphological_analysis'])
+        'morphological_analysis': morphological_data['morphological_analysis']
     }
 
 def validate_hebrew_output(text):
