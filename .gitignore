@@ -1,0 +1,6 @@
+# .gitignore
+*.pdf
+output/
+.env
+__pycache__/
+*.pyc
