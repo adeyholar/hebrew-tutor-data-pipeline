@@ -1,6 +1,6 @@
 # File: D:/AI/Gits/hebrew-tutor-data-pipeline/scripts/convert_hebrew_grammar_pdf.py
 # Pipeline for Hebrew grammar PDFs using Azure Document Intelligence, compatible with Conda unstructured_env-3.11.
-# Updated for parallel processing: Use ThreadPoolExecutor for image conversion and OCR to reduce runtime.
+# Optimized for parallel processing and fresh start.
 
 import os
 import cv2
@@ -147,6 +147,12 @@ def validate_hebrew_output(text):
 def main():
     setup_directories()
     pdf_files = [BASE_DIR / "Gesenius-HebrewGrammar.pdf", BASE_DIR / "hebrew_grammar_davidson.pdf"]
+    try:
+        ner_pipeline = pipeline('ner', model='dicta-il/dictabert-ner', aggregation_strategy='simple')
+        morph_pipeline = pipeline('token-classification', model='dicta-il/dictabert-morph')
+    except Exception as e:
+        print(f"Error loading DictaBERT models: {e}")
+        return
     for pdf_path in pdf_files:
         if not pdf_path.exists():
             print(f"PDF not found: {pdf_path}")
