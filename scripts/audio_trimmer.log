@@ -6,3 +6,24 @@
 2025-08-15 19:04:14,978 - INFO - Backup path: D:\audio\tankh_audio_chp_backup
 2025-08-15 19:13:24,680 - INFO - Created backup: D:\audio\tankh_audio_chp_backup\01_Genesis\01-Gen_01.mp3
 2025-08-15 19:13:25,394 - INFO - Configuration saved
+2025-08-15 19:15:57,223 - INFO - Loaded configuration with 1 entries
+2025-08-15 19:15:57,223 - INFO - Hebrew Audio Trimmer initialized
+2025-08-15 19:15:57,226 - INFO - Audio path: D:\audio\tankh_audio_chp
+2025-08-15 19:15:57,226 - INFO - Backup path: D:\audio\tankh_audio_chp_backup
+2025-08-15 19:16:37,654 - INFO - Configuration saved
+2025-08-15 19:16:37,654 - INFO - Trimmed 01-Gen_01.mp3: 360.5s -> 359.0s
+2025-08-15 19:17:10,538 - INFO - Configuration saved
+2025-08-15 19:17:10,538 - INFO - Trimmed 01-Gen_01.mp3: 359.0s -> 357.5s
+2025-08-15 19:17:23,529 - INFO - Configuration saved
+2025-08-15 19:17:23,529 - INFO - Trimmed 01-Gen_01.mp3: 357.5s -> 356.0s
+2025-08-15 19:19:12,934 - INFO - Configuration saved
+2025-08-15 19:19:12,936 - INFO - Trimmed 01-Gen_01.mp3: 356.0s -> 4.0s
+2025-08-15 19:23:21,500 - INFO - Configuration saved
+2025-08-15 19:23:21,500 - INFO - Trimmed 01-Gen_01.mp3: 362.0s -> 10.0s
+2025-08-15 19:26:01,637 - INFO - Configuration saved
+2025-08-15 19:26:01,639 - INFO - Trimmed 01-Gen_01.mp3: 362.0s -> 352.0s
+2025-08-15 19:30:48,208 - INFO - Created backup: D:\audio\tankh_audio_chp_backup\01_Genesis\01-Gen_50.mp3
+2025-08-15 19:30:48,821 - INFO - Configuration saved
+2025-08-15 19:30:48,821 - INFO - Trimmed 01-Gen_50.mp3: 303.2s -> 301.7s
+2025-08-15 19:31:24,906 - INFO - Configuration saved
+2025-08-15 19:31:24,906 - INFO - Trimmed 01-Gen_50.mp3: 301.7s -> 300.2s
