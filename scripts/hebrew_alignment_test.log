@@ -1,0 +1,26 @@
+2025-08-14 20:27:49,853 - INFO - === QUICK FIX TEST - HEBREW ALIGNMENT ===
+2025-08-14 20:27:49,914 - INFO - GPU available: NVIDIA GeForce RTX 4060 Laptop GPU
+2025-08-14 20:27:49,914 - INFO - Quick fix test initialized
+2025-08-14 20:27:49,915 - INFO - === RUNNING QUICK FIX TESTS ===
+2025-08-14 20:27:49,915 - INFO - Running Bible Data Loading...
+2025-08-14 20:27:49,956 - INFO - Bible data loaded: 39 books
+2025-08-14 20:27:49,956 - INFO - Genesis has 50 chapters
+2025-08-14 20:27:49,956 - INFO - Genesis 1 has 31 verses
+2025-08-14 20:27:49,960 - INFO - PASS: Bible Data Loading
+2025-08-14 20:27:49,960 - INFO - Running Audio Loading...
+2025-08-14 20:27:49,961 - INFO - Testing audio loading: D:\audio\tankh_audio_chp\01_Genesis\01-Gen_01.mp3
+2025-08-14 20:27:50,936 - INFO - Audio loaded: 5792303 samples, duration: 362.02s
+2025-08-14 20:27:50,937 - INFO - PASS: Audio Loading
+2025-08-14 20:27:50,938 - INFO - Running File Saving...
+2025-08-14 20:27:50,938 - INFO - File saving test successful
+2025-08-14 20:27:50,938 - INFO - PASS: File Saving
+2025-08-14 20:27:50,938 - INFO - Basic tests: 3/3 passed
+2025-08-14 20:27:50,939 - INFO - Running transcription test...
+2025-08-14 20:27:50,939 - INFO - Loading openai/whisper-small on cuda...
+2025-08-14 20:27:52,329 - INFO - Model loaded successfully
+2025-08-14 20:27:52,330 - INFO - Loading audio for transcription test...
+2025-08-14 20:27:52,391 - INFO - Processing with Whisper...
+2025-08-14 20:27:53,813 - INFO - Transcription successful:  חמישה חומשה תורה, ספר בראשית, פרשת בראשית. בראשית ברה אלוהים את השמיים ואת הארץ, והארץ היתה תוהו וב...
+2025-08-14 20:27:53,814 - INFO - PASS: Transcription test
+2025-08-14 20:27:53,814 - INFO - === TOTAL: 4/4 tests passed ===
+2025-08-14 20:27:53,814 - INFO - ALL TESTS PASSED! The main script should work now.
