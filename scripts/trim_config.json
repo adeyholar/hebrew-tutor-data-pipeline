@@ -1,0 +1,16 @@
+{
+  "01_Genesis\\01-Gen_01.mp3": {
+    "trim_start": 10.0,
+    "trim_end": null,
+    "original_duration": 362.0189375,
+    "new_duration": 352.0189375,
+    "timestamp": "2025-08-15 19:26:01"
+  },
+  "01_Genesis\\01-Gen_50.mp3": {
+    "trim_start": 1.5,
+    "trim_end": null,
+    "original_duration": 301.6589375,
+    "new_duration": 300.1589375,
+    "timestamp": "2025-08-15 19:31:24"
+  }
+}

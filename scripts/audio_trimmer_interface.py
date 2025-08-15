@@ -1,15 +1,11 @@
 # File Location: D:\AI\Gits\hebrew-tutor-data-pipeline\scripts\audio_trimmer_interface.py
 
-import sys
 import os
+import subprocess
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from pathlib import Path
 import logging
-
-# Add path to existing AudioTrimmer for integration
-sys.path.append(r'D:\AI\Projects\HEBREW-TRAINING-AI-AGENT\utils')
-from audio_trimmer import AudioTrimmer  # Import the class from previous utility
 
 # Configure logging (consistent with pipeline)
 logging.basicConfig(
@@ -21,6 +17,118 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
+
+# Embedded AudioTrimmer class (self-contained to fix import bug)
+class AudioTrimmer:
+    """Utility for trimming Tanakh audio files losslessly using FFmpeg."""
+    
+    def __init__(self, ffmpeg_path: str = "D:/audio/ffmpeg/ffmpeg.exe"):
+        """
+        Initialize with FFmpeg path.
+        
+        Args:
+            ffmpeg_path: Path to FFmpeg executable (default based on project structure).
+        """
+        self.ffmpeg_path = Path(ffmpeg_path)
+        if not self.ffmpeg_path.exists():
+            raise FileNotFoundError(f"FFmpeg not found at {self.ffmpeg_path}")
+        logger.info(f"Initialized AudioTrimmer with FFmpeg at {self.ffmpeg_path}")
+    
+    def trim_audio(
+        self,
+        input_path: str,
+        output_path: str,
+        start_time: float = 0.0,
+        end_time: Optional[float] = None,
+        copy_codec: bool = True
+    ) -> bool:
+        """
+        Trim audio file from start_time to end_time (in seconds) without quality loss.
+        
+        Args:
+            input_path: Path to input audio file (e.g., MP3).
+            output_path: Path to save trimmed audio.
+            start_time: Start time in seconds (default 0.0).
+            end_time: End time in seconds (None for end of file).
+            copy_codec: If True, copy streams without re-encoding (preserves quality).
+        
+        Returns:
+            True if successful, False otherwise.
+        """
+        input_path = Path(input_path)
+        output_path = Path(output_path)
+        
+        if not input_path.exists():
+            logger.error(f"Input file not found: {input_path}")
+            return False
+        
+        cmd = [str(self.ffmpeg_path), "-i", str(input_path), "-ss", str(start_time)]
+        
+        if end_time is not None:
+            duration = end_time - start_time
+            cmd.extend(["-t", str(duration)])
+        
+        if copy_codec:
+            cmd.extend(["-acodec", "copy", "-vcodec", "copy"])
+        
+        cmd.append(str(output_path))
+        
+        try:
+            logger.info(f"Executing FFmpeg command: {' '.join(cmd)}")
+            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+            logger.debug(f"FFmpeg output: {result.stdout}")
+            if output_path.exists():
+                logger.info(f"Trimmed audio saved: {output_path}")
+                return True
+            else:
+                logger.error("Output file not created")
+                return False
+        except subprocess.CalledProcessError as e:
+            logger.error(f"FFmpeg error: {e.stderr}")
+            return False
+        except Exception as e:
+            logger.error(f"Unexpected error: {str(e)}")
+            return False
+    
+    def auto_trim_silence(
+        self,
+        input_path: str,
+        output_path: str,
+        silence_threshold: float = -40.0,
+        silence_duration: float = 0.5
+    ) -> bool:
+        """
+        Automatically trim leading/trailing silence.
+        
+        Args:
+            input_path: Input audio path.
+            output_path: Output path.
+            silence_threshold: dB threshold for silence (default -40dB).
+            silence_duration: Minimum silence duration in seconds.
+        
+        Returns:
+            True if successful.
+        """
+        # FFmpeg filter for silence removal
+        cmd = [
+            str(self.ffmpeg_path), "-i", str(input_path),
+            "-af", f"silenceremove=start_periods=1:start_duration={silence_duration}:start_threshold={silence_threshold}dB,"
+                   f"stop_periods=1:stop_duration={silence_duration}:stop_threshold={silence_threshold}dB",
+            "-acodec", "copy", "-vcodec", "copy",
+            str(output_path)
+        ]
+        
+        try:
+            logger.info(f"Auto-trimming silence with command: {' '.join(cmd)}")
+            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+            logger.debug(f"FFmpeg output: {result.stdout}")
+            if Path(output_path).exists():
+                logger.info(f"Silence-trimmed audio saved: {output_path}")
+                return True
+            return False
+        except Exception as e:
+            logger.error(f"Auto-trim error: {str(e)}")
+            return False
 
 class AudioTrimmerGUI:
     """Tkinter-based GUI for selecting and trimming Tanakh audio files."""
